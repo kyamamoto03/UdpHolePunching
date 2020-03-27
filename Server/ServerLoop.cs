@@ -50,7 +50,7 @@ namespace Server
                 //サーバが送信する文字列を作成
                 string echo_str = $"ServerEcho: {DateTime.Now.ToString()}";
                 //Byte配列に変換
-                byte[] data = System.Text.Encoding.UTF8.GetBytes(echo_str);
+                byte[] data = Encoding.UTF8.GetBytes(echo_str);
                 //サーバからクライアントへ送信
                 PunchingSocket.SendTo(data, SocketFlags.None, PunchingPoint);
 

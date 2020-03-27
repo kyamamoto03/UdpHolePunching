@@ -48,7 +48,7 @@ namespace Server
             while(true)
             {
                 //サーバが送信する文字列を作成
-                string echo_str = $"ServerEcho: {DateTime.Now.ToString()}";
+                string echo_str = $"ServerSent: {DateTime.Now.ToString()}";
                 //Byte配列に変換
                 byte[] data = Encoding.UTF8.GetBytes(echo_str);
                 //サーバからクライアントへ送信

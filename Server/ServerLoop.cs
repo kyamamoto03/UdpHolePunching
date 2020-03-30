@@ -27,6 +27,7 @@ namespace Server
             var TargetAddress = Encoding.UTF8.GetString(udpClient.Receive(ref groupEP));
 
             Console.WriteLine($"UDP HolePunching({TargetAddress})!");
+            Console.WriteLine($"groupEP {groupEP.Address}");
 
             //NATで変換されたIPアドレスおよびポート番号
             var ip = groupEP.Address.ToString();

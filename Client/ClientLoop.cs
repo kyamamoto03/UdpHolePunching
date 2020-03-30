@@ -8,10 +8,9 @@ namespace Client
 {
     class ClientLoop
     {
-        public readonly string ServerAddress = "127.0.0.1";
         public readonly int PortNumber = 11000;
 
-        public void Run()
+        public void Run(string ServerAddress)
         {
             var sending_socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             IPAddress send_to_address = IPAddress.Parse(ServerAddress);

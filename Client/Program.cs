@@ -7,7 +7,7 @@ namespace Client
         static void Main(string[] args)
         {
             ClientLoop loop = new ClientLoop();
-            loop.Run();
+            loop.Run(args[0]);
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Server
 
             PunchingSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             //ソースアドレスを設定する(NATが変換できるように、クライアントが指定した宛先を設定)
-            PunchingSocket.Bind(new IPEndPoint(IPAddress.Parse(TargetAddress), PORT_NUMBER));
+            PunchingSocket.Bind(new IPEndPoint(groupEP.Address, PORT_NUMBER));
 
             PunchingPoint = new IPEndPoint(IPAddress.Parse(ip), port);
 

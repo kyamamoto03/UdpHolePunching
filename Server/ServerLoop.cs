@@ -25,6 +25,7 @@ namespace Server
             //クライアントからのメッセージ(UDPホールパンチング）を待つ
             //groupEPにNATが変換したアドレス＋ポート番号は入ってくる
             var TargetAddress = Encoding.UTF8.GetString(udpClient.Receive(ref groupEP));
+            udpClient.Dispose();
 
             Console.WriteLine($"UDP HolePunching({TargetAddress})!");
             Console.WriteLine($"groupEP {groupEP.Address}");
@@ -35,8 +36,8 @@ namespace Server
 
             PunchingSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             //ソースアドレスを設定する(NATが変換できるように、クライアントが指定した宛先を設定)
-            PunchingSocket.Bind(new IPEndPoint(IPAddress.Parse("10.0.2.4"), PORT_NUMBER));
-
+            PunchingSocket.Bind(new IPEndPoint(groupEP.Address, PORT_NUMBER));
+            
             PunchingPoint = new IPEndPoint(IPAddress.Parse(ip), port);
 
             await MainLoop();
@@ -46,7 +47,7 @@ namespace Server
         {
             var Buffer = new byte[128];
 
-            while(true)
+            while (true)
             {
                 //サーバが送信する文字列を作成
                 string echo_str = $"ServerSent: {DateTime.Now.ToString()}";

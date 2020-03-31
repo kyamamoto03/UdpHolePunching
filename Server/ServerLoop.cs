@@ -66,6 +66,9 @@ namespace Server
                     if (adapter.OperationalStatus != OperationalStatus.Up)
                     {
                         continue;
+                    }else if(adapter.NetworkInterfaceType == NetworkInterfaceType.Loopback)
+                    {
+                        continue;
                     }
 
                     // インターフェースに設定されたIPアドレス情報を取得

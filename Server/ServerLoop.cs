@@ -10,13 +10,13 @@ using System.Net.NetworkInformation;
 
 namespace Server
 {
-    public class ServerLoop : IHostedService
+    public class ServerLoop
     {
         public readonly int PORT_NUMBER = 11000;
         private Socket PunchingSocket;
         private IPEndPoint PunchingPoint;
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        public async Task StartAsync()
         {
             Console.WriteLine("Start");
 
@@ -31,7 +31,6 @@ namespace Server
             udpClient.Dispose();
 
             Console.WriteLine($"UDP HolePunching({TargetAddress})!");
-            Console.WriteLine($"groupEP {groupEP.Address}");
 
             //NATで変換されたIPアドレスおよびポート番号
             var ip = groupEP.Address.ToString();
@@ -43,7 +42,7 @@ namespace Server
 
             PunchingPoint = new IPEndPoint(IPAddress.Parse(ip), port);
 
-            await MainLoop(cancellationToken);
+            await MainLoop();
         }
 
         /// <summary>
@@ -89,10 +88,8 @@ namespace Server
         /// 1秒ごとに時間を送る
         /// </summary>
         /// <returns></returns>
-        private async Task MainLoop(CancellationToken stoppingToken)
+        private async Task MainLoop()
         {
-            var Buffer = new byte[128];
-
             while (true)
             {
                 //サーバが送信する文字列を作成
@@ -102,13 +99,8 @@ namespace Server
                 //サーバからクライアントへ送信
                 PunchingSocket.SendTo(data, SocketFlags.None, PunchingPoint);
 
-                await Task.Delay(1000, stoppingToken);
+                await Task.Delay(1000);
             }
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
         }
     }
 }

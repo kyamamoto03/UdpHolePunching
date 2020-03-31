@@ -20,17 +20,20 @@ namespace Server
         {
             Console.WriteLine("Start");
 
+            //受け付けるアドレスを設定
             var WaitingServerAddress = IPAddresses[0];
-            var udpClient = new UdpClient(PORT_NUMBER);
             IPEndPoint groupEP = new IPEndPoint(WaitingServerAddress, PORT_NUMBER);
 
             Console.WriteLine($"Waiting Address:{WaitingServerAddress}");
+
+            string TargetAddress;
             //クライアントからのメッセージ(UDPホールパンチング）を待つ
             //groupEPにNATが変換したアドレス＋ポート番号は入ってくる
-            var TargetAddress = Encoding.UTF8.GetString(udpClient.Receive(ref groupEP));
-            udpClient.Dispose();
-
-            Console.WriteLine($"UDP HolePunching({TargetAddress})!");
+            using (var udpClient = new UdpClient(PORT_NUMBER))
+            {
+                //Udp Hole Puchingをするために何かしらのデータを受信する(ここではクライアントが指定したサーバのアドレス)
+                TargetAddress = Encoding.UTF8.GetString(udpClient.Receive(ref groupEP));
+            }
 
             //NATで変換されたIPアドレスおよびポート番号
             var ip = groupEP.Address.ToString();

@@ -10,13 +10,16 @@ using System.Net.NetworkInformation;
 
 namespace Server
 {
-    public class ServerLoop
+    public class ServerLoop : IHostedService
     {
+        private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
+        private Task _executingTask;
+
         public readonly int PORT_NUMBER = 11000;
         private Socket PunchingSocket;
         private IPEndPoint PunchingPoint;
 
-        public async Task StartAsync()
+        public Task StartAsync(CancellationToken cancellationToken)
         {
             Console.WriteLine("Start");
 
@@ -45,7 +48,9 @@ namespace Server
 
             PunchingPoint = new IPEndPoint(IPAddress.Parse(ip), port);
 
-            await MainLoop();
+            _executingTask = Task.Run(async () => await MainLoop());
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -96,7 +101,7 @@ namespace Server
         /// <returns></returns>
         private async Task MainLoop()
         {
-            while (true)
+            while (!_stoppingCts.IsCancellationRequested)
             {
                 //サーバが送信する文字列を作成
                 string echo_str = $"ServerSent: {DateTime.Now.ToString()}";
@@ -105,7 +110,20 @@ namespace Server
                 //サーバからクライアントへ送信
                 PunchingSocket.SendTo(data, SocketFlags.None, PunchingPoint);
 
-                await Task.Delay(1000);
+                await Task.Delay(1000, _stoppingCts.Token);
+            }
+        }
+
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                _stoppingCts.Cancel();
+            }
+            finally
+            {
+                await Task.WhenAny(_executingTask, Task.Delay(Timeout.Infinite,
+                                                              cancellationToken));
             }
         }
     }

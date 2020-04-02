@@ -7,11 +7,15 @@ namespace Server
 {
     class Program
     {
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+            .ConfigureServices((hostContext, services) =>
+            {
+                services.AddHostedService<ServerLoop>();
+            });
         static void Main(string[] args)
         {
-            ServerLoop serverLoop = new ServerLoop();
-
-            Task.Run(async () => await serverLoop.StartAsync()).Wait();
+            CreateHostBuilder(args).Build().Run();
         }
     }
 }
